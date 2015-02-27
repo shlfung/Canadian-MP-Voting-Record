@@ -1,4 +1,4 @@
-
+#Test Commit
 #This script parses data from openparliament.ca and return a CSV file that shows how each MP's voting record in a parliament session
 #Created by Stephen Fung
 #January 2014
@@ -57,7 +57,7 @@ def get_bills_from_session(session, limit):
 
     #Using the bill number with the API to turn each bill into a bill object
     for i in bills_info_brief:
-        
+
         print(i['number'])
 
         url = 'http://api.openparliament.ca/bills/'
@@ -69,13 +69,13 @@ def get_bills_from_session(session, limit):
         response = urllib.request.urlopen(full_url)
         bill_json = json.loads(response.read().decode('utf8'))
         counter = counter + 1
-        
+
         #Some bills don't have any vote record
-        if not bill_json['vote_urls']:       
+        if not bill_json['vote_urls']:
             bill = Bill(bill_json['number'], bill_json['short_title']['en'], bill_json['short_title']['fr'], bill_json['sponsor_politician_url'], '', '',bill_json['introduced'], bill_json['legisinfo_id'], bill_json['status']['en'], bill_json['name']['en'])
             #print(bill.name_en)
             #print(bill.last_vote)
-            #print(counter)           
+            #print(counter)
         else:
             bill = Bill(bill_json['number'], bill_json['short_title']['en'], bill_json['short_title']['fr'], bill_json['sponsor_politician_url'], bill_json['vote_urls'][0], '', bill_json['introduced'], bill_json['legisinfo_id'], bill_json['status']['en'], bill_json['name']['en'])
 
@@ -106,16 +106,16 @@ def get_bills_from_session(session, limit):
                 politician_name_with_space = politician_name.replace('-',' ')
                 politician_name_final = politician_name_with_space.title()
                 ballot_dict[politician_name_final] = i['ballot']
-                
+
 
             bill.last_vote_ballot = ballot_dict
             print(bill.last_vote_ballot)
-      
+
         #input('Press Enter to continue')
 
         list_of_bills.append(bill)
         time.sleep(5)
-        
+
     return list_of_bills
 
 #Input: list of bill objects
@@ -144,7 +144,7 @@ def export_vote_results(list_of_bills):
 
         #Voting record can be empty for a bill
         if not i.last_vote_ballot:
-            votes.append({})     
+            votes.append({})
         else:
             votes.append(i.last_vote_ballot)
 
@@ -162,11 +162,9 @@ def export_vote_results(list_of_bills):
     data_frame.insert(3, 'Status', status)
 
     data_frame.to_csv('J:/41-1.csv')
-    
+
 if __name__ == "__main__":
 
     lobs = get_bills_from_session('41-1', 1000)
 
     export_vote_results(lobs)
-    
-   
